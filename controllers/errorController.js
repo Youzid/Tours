@@ -13,9 +13,16 @@ const handleDuplicateFieldsDB = err => {
 };
 const handleValidationDB = err => {
   const errors = Object.values(err.errors).map(el => el.message);
-
   const message = `Invalid input data. ${errors.join('. ')} `;
   return new AppError(message, 400);
+};
+const handleJWTError = () => {
+  const message = `Invalid Token.`;
+  return new AppError(message, 401);
+};
+const handleJWTExipredError = () => {
+  const message = `Expired Token.`;
+  return new AppError(message, 401);
 };
 
 const sendErrorDev = (err, res) => {
@@ -55,6 +62,9 @@ module.exports = (err, req, res, next) => {
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError') error = handleValidationDB(error);
+    if (error.name === 'JsonWebTokenError') error = handleJWTError();
+    if (error.name === 'TokenExpiredError') error = handleJWTExipredError();
+
     sendErrorProd(error, res);
   }
 };
