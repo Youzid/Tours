@@ -1,4 +1,5 @@
 const express = require('express');
+const hpp = require('hpp');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const morgan = require('morgan');
@@ -6,9 +7,9 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
+const reviewsRouter = require('./routes/reviewRoutes');
 const AppError = require('./utils/appError');
 const globalErrorHnadler = require('./controllers/errorController');
-const hpp = require('hpp');
 
 const app = express();
 
@@ -64,6 +65,7 @@ app.use((req, res, next) => {
 // 3) ROUTES
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewsRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
